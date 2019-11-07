@@ -1,0 +1,17 @@
+var WebRTCRecorder;
+var start;
+var pause;
+var resume;
+var stop;
+var isAvaliable;
+var resetOptions;
+var destroy;
+var clearSteam;
+var clearSourceBuffer;
+var DEFAULT_VIDEO_OPTIONS;
+var options;
+var state;
+var fps;
+var codecs;
+var getUrl;
+var getBlob;

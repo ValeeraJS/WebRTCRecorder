@@ -1,0 +1,91 @@
+{
+	"name": "@valeera/eventdispatcher",
+	"version": "0.1.0",
+	"description": "Event dispatcher fit for most framework.",
+	"main": "build/WebRTCRecorder.js",
+	"repository": "ValeeraJS/WebRTCRecorder",
+	"jsnext:main": "build/WebRTCRecorder.module.js",
+	"module": "build/WebRTCRecorder.module.js",
+	"types": "build/WebRTCRecorder.d.ts",
+	"files": [
+		"build",
+		"LICENSE",
+		"package.json",
+		"README.md",
+		"src"
+	],
+	"directories": {
+		"docs": "docs",
+		"examples": "examples",
+		"src": "src"
+	},
+	"eslintConfig": {
+		"parser": "@typescript-eslint/parser",
+		"extends": "mdcs",
+		"plugins": [
+			"html",
+			"@typescript-eslint"
+		],
+		"rules": {
+			"@typescript-eslint/no-unused-vars": 1,
+			"@typescript-eslint/indent": [
+				"error",
+				"tab",
+				{
+					"SwitchCase": 1
+				}
+			]
+		}
+	},
+	"scripts": {
+		"build": "rollup -c scripts/rollup.config.js",
+		"build-legacy": "rollup -c scripts/rollup.config.legacy.js",
+		"build-closure": "google-closure-compiler --compilation_level=ADVANCED_OPTIMIZATIONS --warning_level=VERBOSE --jscomp_off=globalThis --jscomp_off=checkTypes --externs scripts/externs.js --language_in=ECMASCRIPT_NEXT --js build/WebRTCRecorder.js --js_output_file build/WebRTCRecorder.min.js",
+		"build-closure-legacy": "google-closure-compiler --compilation_level=ADVANCED_OPTIMIZATIONS --warning_level=VERBOSE --jscomp_off=globalThis --jscomp_off=checkTypes --externs scripts/externs.js --language_in=ECMASCRIPT5 --js build/WebRTCRecorder.legacy.js --js_output_file build/WebRTCRecorder.legacy.min.js",
+		"build-all": "npm run build && npm run build-legacy && npm run build-closure && npm run build-closure-legacy",
+		"start": "npm run dev",
+		"lint": "eslint src --ext js --ext ts",
+		"test": "nyc --reporter=html --reporter=text mocha --require esm",
+		"travis": "npm run lint && npm test"
+	},
+	"keywords": [
+		"WebRTCRecorder",
+		"utils",
+		"module",
+		"WebRTC",
+		"WebGL"
+	],
+	"author": "hypnosnova",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/dom-mediacapture-record": "^1.0.2",
+		"@typescript-eslint/eslint-plugin": "^2.6.1",
+		"@typescript-eslint/parser": "^2.6.1",
+		"chai": "^4.2.0",
+		"concurrently": "^5.0.0",
+		"eslint": "^6.6.0",
+		"eslint-plugin-html": "^6.0.0",
+		"esm": "^3.2.25",
+		"google-closure-compiler": "^20191027.0.0",
+		"http-server": "^0.11.1",
+		"qunit": "^2.9.3",
+		"rollup": "^1.26.3",
+		"rollup-plugin-json": "^4.0.0",
+		"rollup-plugin-typescript2": "^0.24.3",
+		"typescript": "^3.6.4"
+	},
+	"jspm": {
+		"files": [
+			"package.json",
+			"LICENSE",
+			"README.md",
+			"build/WebRTCRecorder.js",
+			"build/WebRTCRecorder.min.js",
+			"build/WebRTCRecorder.module.js",
+			"build/WebRTCRecorder.legacy.js",
+			"build/WebRTCRecorder.legacy.min.js",
+			"build/WebRTCRecorder.legacy.module.js"
+		],
+		"directories": {}
+	}
+}
