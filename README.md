@@ -6,8 +6,8 @@ It could be used with any engines and the behaviours are total the same.
 
 ## Examples
 
-PIXI.js: https://valeerajs.github.io/WebRTCRecorder/examples/pixi
+PIXI.js: https://valeerajs.github.io/WebRTCRecorder/examples/pixi/index.html
 
-THREE.js: https://valeerajs.github.io/WebRTCRecorder/examples/three
+THREE.js: https://valeerajs.github.io/WebRTCRecorder/examples/three/index.html
 
-WebGL: https://valeerajs.github.io/WebRTCRecorder/examples/webgl
+WebGL: https://valeerajs.github.io/WebRTCRecorder/examples/webgl/index.html
