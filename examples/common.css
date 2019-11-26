@@ -1,0 +1,31 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    overflow: hidden;
+}
+
+button {
+    background: blue;
+    padding: 5px;
+    color: white;
+    font-size: 16px;
+}
+
+video {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 480px;
+    height: 270px;
+}
+
+.disabled-btn{
+    pointer-events: none;
+}
+.disabled-btn .property-name{
+    color: #888;
+    text-decoration: line-through;
+}
