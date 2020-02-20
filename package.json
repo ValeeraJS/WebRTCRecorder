@@ -1,5 +1,5 @@
 {
-	"name": "@valeera/eventdispatcher",
+	"name": "@valeera/webrtcrecorder",
 	"version": "0.1.0",
 	"description": "Event dispatcher fit for most framework.",
 	"main": "build/WebRTCRecorder.js",
