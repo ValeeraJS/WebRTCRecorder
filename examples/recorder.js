@@ -5,6 +5,7 @@ function createRecorderAndGUI(canvas) {
     videoElement.controls = "controls";
     document.body.appendChild(videoElement);
     var recorder = new WebRTCRecorder(canvas);
+    console.log(recorder)
     var api = {
         "fps": recorder.options.fps,
         "codecs": "vp9",
@@ -27,6 +28,8 @@ function createRecorderAndGUI(canvas) {
         stopBtn.classList.remove("disabled-btn");
         pauseBtn.classList.remove("disabled-btn");
         resumeBtn.classList.add("disabled-btn");
+        videoElement.srcObject = recorder.mediaStream;
+        videoElement.play();
     });
     gui.add(api, "resume").onChange(function () {
         startBtn.classList.add("disabled-btn");
@@ -45,6 +48,7 @@ function createRecorderAndGUI(canvas) {
         stopBtn.classList.add("disabled-btn");
         pauseBtn.classList.add("disabled-btn");
         resumeBtn.classList.add("disabled-btn");
+        videoElement.srcObject = null;
     });
     gui.add(api, "show dom").onChange(function (val) {
         videoElement.style.display = val ? "block" : "none";
