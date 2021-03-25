@@ -5,14 +5,13 @@ function createRecorderAndGUI(canvas) {
     videoElement.controls = "controls";
     document.body.appendChild(videoElement);
     var recorder = new WebRTCRecorder(canvas);
-    console.log(recorder)
     var api = {
         "fps": recorder.options.fps,
         "codecs": "vp9",
         "show dom": true,
         "start": recorder.start,
         "stop": () => {
-            console.log(recorder.getUrl())
+            recorder.stop();
             videoElement.src = recorder.getUrl();
         },
         "pause": recorder.pause,

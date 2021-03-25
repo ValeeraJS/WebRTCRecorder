@@ -101,7 +101,7 @@ class WebRTCRecorder {
         };
         this.start = (ms = 100) => {
             this.recordedBlobs = [];
-            this.mediaRecorder = this.getMediaRecorder();
+            this.mediaRecorder = this.mediaRecorder || this.getMediaRecorder();
             if (!this.mediaRecorder) {
                 this.state = ERecordState.error;
                 return this;

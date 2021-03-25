@@ -1,7 +1,7 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
-	(global = global || self, global.WebRTCRecorder = factory());
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.WebRTCRecorder = factory());
 }(this, (function () { 'use strict';
 
 	/**
@@ -107,7 +107,7 @@
 	        };
 	        this.start = (ms = 100) => {
 	            this.recordedBlobs = [];
-	            this.mediaRecorder = this.getMediaRecorder();
+	            this.mediaRecorder = this.mediaRecorder || this.getMediaRecorder();
 	            if (!this.mediaRecorder) {
 	                this.state = ERecordState.error;
 	                return this;

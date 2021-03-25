@@ -1,27 +1,27 @@
-import typescript from 'rollup-plugin-typescript2';
-import json from 'rollup-plugin-json';
+import json from "rollup-plugin-json";
+import typescript from "rollup-plugin-typescript2";
 
 export default {
-	input: 'src/index.ts',
+	input: "src/index.ts",
+	output: [
+		{
+			file: "build/WebRTCRecorder.legacy.js",
+			format: "umd",
+			indent: "\t",
+			name: "WebRTCRecorder",
+			sourceMap: true
+		},
+		{
+			file: "build/WebRTCRecorder.legacy.module.js",
+			format: "es",
+			indent: "\t",
+			sourceMap: true
+		}
+	],
 	plugins: [
 		json(),
 		typescript({
-			tsconfig: './tsconfig.legacy.json'
+			tsconfig: "./tsconfig.legacy.json"
 		})
-	],
-	output: [
-		{
-			format: 'umd',
-			name: 'WebRTCRecorder',
-			file: 'build/WebRTCRecorder.legacy.js',
-			sourceMap: true,
-			indent: '\t'
-		},
-		{
-			format: 'es',
-			file: 'build/WebRTCRecorder.legacy.module.js',
-			sourceMap: true,
-			indent: '\t'
-		}
 	]
 };

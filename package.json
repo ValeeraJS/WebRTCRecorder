@@ -19,24 +19,6 @@
 		"examples": "examples",
 		"src": "src"
 	},
-	"eslintConfig": {
-		"parser": "@typescript-eslint/parser",
-		"extends": "mdcs",
-		"plugins": [
-			"html",
-			"@typescript-eslint"
-		],
-		"rules": {
-			"@typescript-eslint/no-unused-vars": 1,
-			"@typescript-eslint/indent": [
-				"error",
-				"tab",
-				{
-					"SwitchCase": 1
-				}
-			]
-		}
-	},
 	"scripts": {
 		"build": "rollup -c scripts/rollup.config.js",
 		"build-legacy": "rollup -c scripts/rollup.config.legacy.js",
@@ -58,21 +40,25 @@
 	"author": "hypnosnova",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/dom-mediacapture-record": "^1.0.2",
-		"@typescript-eslint/eslint-plugin": "^2.6.1",
-		"@typescript-eslint/parser": "^2.6.1",
-		"chai": "^4.2.0",
-		"concurrently": "^5.0.0",
-		"eslint": "^6.6.0",
-		"eslint-plugin-html": "^6.0.0",
-		"esm": "^3.2.25",
-		"google-closure-compiler": "^20191027.0.0",
-		"http-server": "^0.11.1",
-		"qunit": "^2.9.3",
-		"rollup": "^1.26.3",
+		"@types/dom-mediacapture-record": "^1.0.7",
+		"@typescript-eslint/eslint-plugin": "^4.17.0",
+		"@typescript-eslint/parser": "^4.17.0",
+		"chai": "^4.3.3",
+		"concurrently": "^6.0.0",
+		"eslint": "^7.21.0",
+		"eslint-config-valeera": "^0.1.1",
+		"eslint-plugin-html": "^6.1.2",
+		"eslint-plugin-prettier": "^3.3.1",
+		"eslint-plugin-tsdoc": "^0.2.3",
+		"google-closure-compiler": "^20210302.0.0",
+		"http-server": "^0.12.3",
+		"mocha": "^8.3.2",
+		"nyc": "^15.1.0",
+		"prettier": "^2.2.1",
+		"rollup": "^2.41.2",
 		"rollup-plugin-json": "^4.0.0",
-		"rollup-plugin-typescript2": "^0.24.3",
-		"typescript": "^3.6.4"
+		"rollup-plugin-typescript2": "^0.30.0",
+		"typescript": "^4.2.3"
 	},
 	"jspm": {
 		"files": [
