@@ -202,3 +202,4 @@
 	return WebRTCRecorder;
 
 })));
+//# sourceMappingURL=WebRTCRecorder.legacy.js.map

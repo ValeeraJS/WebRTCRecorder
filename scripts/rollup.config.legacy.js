@@ -9,13 +9,13 @@ export default {
 			format: "umd",
 			indent: "\t",
 			name: "WebRTCRecorder",
-			sourceMap: true
+			sourcemap: true
 		},
 		{
 			file: "build/WebRTCRecorder.legacy.module.js",
 			format: "es",
 			indent: "\t",
-			sourceMap: true
+			sourcemap: false
 		}
 	],
 	plugins: [

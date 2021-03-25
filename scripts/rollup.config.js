@@ -15,7 +15,7 @@ export default {
 			file: "build/WebRTCRecorder.module.js",
 			format: "es",
 			indent: "\t",
-			sourcemap: true
+			sourcemap: false
 		}
 	],
 	plugins: [

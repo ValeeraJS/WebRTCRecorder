@@ -1,6 +1,6 @@
 {
 	"name": "@valeera/webrtcrecorder",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Event dispatcher fit for most framework.",
 	"main": "build/WebRTCRecorder.js",
 	"repository": "ValeeraJS/WebRTCRecorder",
