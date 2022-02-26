@@ -1,8 +1,12 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.WebRTCRecorder = factory());
-}(this, (function () { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@valeera/blobdownloader')) :
+	typeof define === 'function' && define.amd ? define(['@valeera/blobdownloader'], factory) :
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.WebRTCRecorder = factory(global.BlobDownloader));
+}(this, (function (BlobDownloader) { 'use strict';
+
+	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+	var BlobDownloader__default = /*#__PURE__*/_interopDefaultLegacy(BlobDownloader);
 
 	/*! *****************************************************************************
 	Copyright (c) Microsoft Corporation.
@@ -30,15 +34,6 @@
 	    return __assign.apply(this, arguments);
 	};
 
-	/**
-	 * @author hypnosnova / https://github.com/HypnosNova
-	 * @param canvas: the canvas dom element which used webgl context
-	 * @param options: {
-	 *     fps: default is 60,
-	 *     format: default is 'webm',
-	 *     codecs: default is 'vp8'
-	 * }
-	 */
 	var ECodecs;
 	(function (ECodecs) {
 	    ECodecs["VP8"] = "vp8";
@@ -56,145 +51,135 @@
 	    ERecordState["stopped"] = "stopped";
 	})(ERecordState || (ERecordState = {}));
 	var DEFAULT_VIDEO_OPTIONS = {
-	    fps: 60,
-	    format: 'webm',
-	    codecs: ECodecs.VP8
+	    codecs: ECodecs.VP8,
+	    format: "webm",
+	    fps: 60
 	};
 	var WebRTCRecorder = /** @class */ (function () {
 	    function WebRTCRecorder(canvas, options) {
 	        var _this = this;
 	        if (options === void 0) { options = DEFAULT_VIDEO_OPTIONS; }
-	        this.linkDom = document.createElement("a");
-	        this.clearSourceBuffer = function () {
-	            if (_this.mediaSource) {
-	                var arr = _this.mediaSource.sourceBuffers;
-	                for (var i = 0; i < arr.length; i++) {
-	                    _this.mediaSource.removeSourceBuffer(arr[i]);
-	                }
-	            }
-	            return _this;
-	        };
-	        this.clearSteam = function () {
-	            if (_this.mediaStream) {
-	                var arr = _this.mediaStream.getTracks();
-	                for (var i = 0; i < arr.length; i++) {
-	                    arr[i].enabled = false;
-	                    arr[i].stop();
-	                    _this.mediaStream.removeTrack(arr[i]);
-	                }
-	            }
-	            return _this;
-	        };
-	        this.destroy = function () {
-	            _this.clearSourceBuffer().clearSteam();
-	            _this.recordedBlobs = [];
-	            return _this;
-	        };
-	        this.download = function (fileName) {
-	            if (fileName === void 0) { fileName = "untitled_" + new Date().getTime(); }
-	            var blob = new Blob(_this.recordedBlobs, { type: "video/" + _this.options.format });
-	            var url = window.URL.createObjectURL(blob);
-	            var a = _this.linkDom;
-	            a.href = url;
-	            a.download = fileName + "." + _this.options.format;
-	            document.body.appendChild(a);
-	            a.click();
-	            setTimeout(function () {
-	                document.body.removeChild(a);
-	                window.URL.revokeObjectURL(url);
-	            }, 0);
-	            return _this;
-	        };
-	        this.getBlob = function () {
-	            return new Blob(_this.recordedBlobs, {
-	                type: "video/" + _this.options.format
-	            });
-	        };
-	        this.getUrl = function () {
-	            return window.URL.createObjectURL(_this.getBlob());
-	        };
-	        this.pause = function () {
-	            if (_this.state === ERecordState.started && _this.mediaRecorder) {
-	                _this.mediaRecorder.pause();
-	                _this.state = ERecordState.paused;
-	            }
-	            return _this;
-	        };
-	        this.resetOptions = function (options) {
-	            _this.options = __assign(__assign({}, DEFAULT_VIDEO_OPTIONS), options);
-	            return _this.destroy().init();
-	        };
-	        this.resume = function () {
-	            if (_this.state === ERecordState.paused && _this.mediaRecorder) {
-	                _this.mediaRecorder.resume();
-	                _this.state = ERecordState.started;
-	            }
-	            return _this;
-	        };
-	        this.start = function (ms) {
-	            if (ms === void 0) { ms = 100; }
-	            _this.recordedBlobs = [];
-	            _this.mediaRecorder = _this.mediaRecorder || _this.getMediaRecorder();
-	            if (!_this.mediaRecorder) {
-	                _this.state = ERecordState.error;
-	                return _this;
-	            }
-	            _this.mediaRecorder.ondataavailable = function (event) {
-	                if (event.data && event.data.size > 0) {
-	                    _this.recordedBlobs.push(event.data);
-	                }
-	            };
-	            _this.mediaRecorder.start(ms);
-	            _this.state = ERecordState.started;
-	            return _this;
-	        };
-	        this.stop = function () {
-	            _this.state = ERecordState.stopped;
-	            if (_this.mediaRecorder) {
-	                _this.mediaRecorder.stop();
-	            }
-	            return _this;
-	        };
-	        this.toggle = function () {
-	            if (_this.state === ERecordState.stopped) {
-	                _this.start();
-	            }
-	            else if (_this.state === ERecordState.started) {
-	                _this.stop();
-	            }
-	            else if (_this.state === ERecordState.paused) {
-	                _this.resume();
-	            }
-	            return _this;
-	        };
 	        this.init = function () {
 	            _this.mediaSource = new MediaSource();
 	            _this.mediaStream = _this.canvas.captureStream(_this.options.fps);
 	            return _this;
 	        };
-	        this.getMediaRecorder = function () {
-	            var _a = _this.options, format = _a.format, codecs = _a.codecs;
-	            var options1 = {
-	                mimeType: "video/" + format + ";codecs=" + codecs
-	            };
-	            var options2 = {
-	                mimeType: "video/" + format
-	            };
-	            if (MediaRecorder.isTypeSupported(options1.mimeType)) {
-	                return new MediaRecorder(_this.mediaStream, options1);
-	            }
-	            else if (MediaRecorder.isTypeSupported(options2.mimeType)) {
-	                return new MediaRecorder(_this.mediaStream, options2);
-	            }
-	            else {
-	                return false;
-	            }
-	        };
 	        this.canvas = canvas;
 	        this.resetOptions(options);
 	    }
+	    WebRTCRecorder.prototype.clearSourceBuffer = function () {
+	        if (this.mediaSource) {
+	            var arr = this.mediaSource.sourceBuffers;
+	            for (var i = 0; i < arr.length; i++) {
+	                this.mediaSource.removeSourceBuffer(arr[i]);
+	            }
+	        }
+	        return this;
+	    };
+	    WebRTCRecorder.prototype.clearSteam = function () {
+	        if (this.mediaStream) {
+	            var arr = this.mediaStream.getTracks();
+	            for (var i = 0; i < arr.length; i++) {
+	                arr[i].enabled = false;
+	                arr[i].stop();
+	                this.mediaStream.removeTrack(arr[i]);
+	            }
+	        }
+	        return this;
+	    };
+	    WebRTCRecorder.prototype.destroy = function () {
+	        this.clearSourceBuffer().clearSteam();
+	        this.recordedBlobs = [];
+	        return this;
+	    };
+	    WebRTCRecorder.prototype.download = function (fileName) {
+	        if (fileName === void 0) { fileName = "untitled_" + new Date().getTime(); }
+	        BlobDownloader__default['default'].download(this.getBlob(), fileName);
+	        return this;
+	    };
+	    WebRTCRecorder.prototype.getBlob = function () {
+	        return new Blob(this.recordedBlobs, {
+	            type: "video/" + this.options.format
+	        });
+	    };
+	    WebRTCRecorder.prototype.getUrl = function () {
+	        return window.URL.createObjectURL(this.getBlob());
+	    };
+	    WebRTCRecorder.prototype.pause = function () {
+	        if (this.state === ERecordState.started && this.mediaRecorder) {
+	            this.mediaRecorder.pause();
+	            this.state = ERecordState.paused;
+	        }
+	        return this;
+	    };
+	    WebRTCRecorder.prototype.resetOptions = function (options) {
+	        this.options = __assign(__assign({}, DEFAULT_VIDEO_OPTIONS), options);
+	        return this.destroy().init();
+	    };
+	    WebRTCRecorder.prototype.resume = function () {
+	        if (this.state === ERecordState.paused && this.mediaRecorder) {
+	            this.mediaRecorder.resume();
+	            this.state = ERecordState.started;
+	        }
+	        return this;
+	    };
+	    WebRTCRecorder.prototype.start = function (ms) {
+	        var _this = this;
+	        if (ms === void 0) { ms = 100; }
+	        this.recordedBlobs = [];
+	        this.mediaRecorder = this.mediaRecorder || this.getMediaRecorder();
+	        if (!this.mediaRecorder) {
+	            this.state = ERecordState.error;
+	            return this;
+	        }
+	        this.mediaRecorder.ondataavailable = function (event) {
+	            if (event.data && event.data.size > 0) {
+	                _this.recordedBlobs.push(event.data);
+	            }
+	        };
+	        this.mediaRecorder.start(ms);
+	        this.state = ERecordState.started;
+	        return this;
+	    };
+	    WebRTCRecorder.prototype.stop = function () {
+	        this.state = ERecordState.stopped;
+	        if (this.mediaRecorder) {
+	            this.mediaRecorder.stop();
+	        }
+	        return this;
+	    };
+	    WebRTCRecorder.prototype.toggle = function () {
+	        if (this.state === ERecordState.stopped) {
+	            this.start();
+	        }
+	        else if (this.state === ERecordState.started) {
+	            this.stop();
+	        }
+	        else if (this.state === ERecordState.paused) {
+	            this.resume();
+	        }
+	        return this;
+	    };
+	    WebRTCRecorder.prototype.getMediaRecorder = function () {
+	        var _a = this.options, format = _a.format, codecs = _a.codecs;
+	        var options1 = {
+	            mimeType: "video/" + format + ";codecs=" + codecs
+	        };
+	        var options2 = {
+	            mimeType: "video/" + format
+	        };
+	        if (MediaRecorder.isTypeSupported(options1.mimeType)) {
+	            return new MediaRecorder(this.mediaStream, options1);
+	        }
+	        else if (MediaRecorder.isTypeSupported(options2.mimeType)) {
+	            return new MediaRecorder(this.mediaStream, options2);
+	        }
+	        else {
+	            return false;
+	        }
+	    };
 	    WebRTCRecorder.isAvaliable = function (canvas) {
-	        return MediaSource && canvas.captureStream;
+	        return !!MediaSource && !!canvas.captureStream;
 	    };
 	    return WebRTCRecorder;
 	}());

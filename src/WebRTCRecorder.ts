@@ -1,6 +1,7 @@
+import BlobDownloader from "@valeera/blobdownloader";
 /**
  * @author hypnosnova / https://github.com/HypnosNova
- * @param canvas: the canvas dom element which used webgl context
+ * @param canvas: the canvas dom element
  * @param options: {
  *     fps: default is 60,
  *     format: default is 'webm',
@@ -8,15 +9,15 @@
  * }
  */
 
-interface CanvasBeta extends HTMLCanvasElement{
-	captureStream: (fps: number) => MediaStream
+interface CanvasBeta extends HTMLCanvasElement {
+	captureStream: (fps: number) => MediaStream;
 }
 
 export enum ECodecs {
 	VP8 = "vp8",
 	VP9 = "vp9",
 	Opus = "Opus",
-	iSAC = 'isac',
+	iSAC = "isac",
 	iLBC = "ilbc",
 	H264 = "h264"
 }
@@ -25,22 +26,26 @@ export enum ERecordState {
 	error = "error",
 	paused = "paused",
 	started = "started",
-	stopped = "stopped",
+	stopped = "stopped"
 }
 
-export type TVideoOptions = {
+export interface TVideoOptions {
 	fps?: number;
-	format?: 'webm'; // webrtc only support webm right now
-	codecs?: ECodecs
+	format?: "webm"; // webrtc only support webm right now
+	codecs?: ECodecs;
 }
 
 export const DEFAULT_VIDEO_OPTIONS: TVideoOptions = {
-	fps: 60,
-	format: 'webm',
-	codecs: ECodecs.VP8
-}
+	codecs: ECodecs.VP8,
+	format: "webm",
+	fps: 60
+};
 
 export default class WebRTCRecorder {
+	public static isAvaliable = (canvas: HTMLCanvasElement): boolean => {
+		return !!MediaSource && !!(canvas as CanvasBeta).captureStream;
+	};
+
 	public canvas: HTMLCanvasElement;
 	public mediaRecorder: MediaRecorder | false;
 	public mediaSource: MediaSource;
@@ -49,102 +54,95 @@ export default class WebRTCRecorder {
 	public state: ERecordState;
 
 	private options: TVideoOptions;
-	private linkDom = document.createElement("a");
-
-	static isAvaliable = (canvas: HTMLCanvasElement) => {
-		return MediaSource && (canvas as CanvasBeta).captureStream;
-	}
 
 	public constructor(canvas: HTMLCanvasElement, options: TVideoOptions = DEFAULT_VIDEO_OPTIONS) {
 		this.canvas = canvas;
 		this.resetOptions(options);
 	}
 
-	public clearSourceBuffer = () => {
+	public clearSourceBuffer(): this {
 		if (this.mediaSource) {
-			let arr = this.mediaSource.sourceBuffers;
-			for (var i = 0; i < arr.length; i++) {
+			const arr = this.mediaSource.sourceBuffers;
+
+			for (let i = 0; i < arr.length; i++) {
 				this.mediaSource.removeSourceBuffer(arr[i]);
 			}
 		}
+
 		return this;
 	}
 
-	public clearSteam = () => {
+	public clearSteam(): this {
 		if (this.mediaStream) {
-			let arr = this.mediaStream.getTracks();
-			for (var i = 0; i < arr.length; i++) {
+			const arr = this.mediaStream.getTracks();
+
+			for (let i = 0; i < arr.length; i++) {
 				arr[i].enabled = false;
 				arr[i].stop();
 				this.mediaStream.removeTrack(arr[i]);
 			}
 		}
+
 		return this;
 	}
 
-	public destroy = () => {
+	public destroy(): this {
 		this.clearSourceBuffer().clearSteam();
 		this.recordedBlobs = [];
-		return this;
-	}
-
-	public download = (fileName: string = "untitled_" + new Date().getTime()) => {
-		const blob = new Blob(this.recordedBlobs, { type: "video/" + this.options.format });
-		const url = window.URL.createObjectURL(blob);
-		const a = this.linkDom;
-		a.href = url;
-		a.download = fileName + "." + this.options.format;
-		document.body.appendChild(a);
-		a.click();
-
-		setTimeout(() => {
-			document.body.removeChild(a);
-			window.URL.revokeObjectURL(url);
-		}, 0);
 
 		return this;
 	}
 
-	public getBlob = () => {
+	public download(fileName: string = "untitled_" + new Date().getTime()): this {
+		BlobDownloader.download(this.getBlob(), fileName);
+
+		return this;
+	}
+
+	public getBlob(): Blob {
 		return new Blob(this.recordedBlobs, {
 			type: "video/" + this.options.format
 		});
 	}
 
-	public getUrl = () => {
+	public getUrl(): string {
 		return window.URL.createObjectURL(this.getBlob());
 	}
 
-	public pause = () => {
+	public pause(): this {
 		if (this.state === ERecordState.started && this.mediaRecorder) {
 			this.mediaRecorder.pause();
 			this.state = ERecordState.paused;
 		}
+
 		return this;
 	}
 
-	public resetOptions = (options: TVideoOptions) => {
+	public resetOptions(options: TVideoOptions): this {
 		this.options = {
 			...DEFAULT_VIDEO_OPTIONS,
 			...options
 		};
+
 		return this.destroy().init();
 	}
 
-	public resume = () => {
+	public resume(): this {
 		if (this.state === ERecordState.paused && this.mediaRecorder) {
 			this.mediaRecorder.resume();
 			this.state = ERecordState.started;
 		}
+
 		return this;
 	}
 
-	public start = (ms: number = 100) => {
+	public start(ms = 100): this {
 		this.recordedBlobs = [];
 		this.mediaRecorder = this.mediaRecorder || this.getMediaRecorder();
 
 		if (!this.mediaRecorder) {
 			this.state = ERecordState.error;
+
 			return this;
 		}
 
@@ -156,18 +154,20 @@ export default class WebRTCRecorder {
 
 		this.mediaRecorder.start(ms);
 		this.state = ERecordState.started;
+
 		return this;
 	}
 
-	public stop = () => {
+	public stop(): this {
 		this.state = ERecordState.stopped;
 		if (this.mediaRecorder) {
 			this.mediaRecorder.stop();
 		}
+
 		return this;
 	}
 
-	public toggle = () => {
+	public toggle(): this {
 		if (this.state === ERecordState.stopped) {
 			this.start();
 		} else if (this.state === ERecordState.started) {
@@ -175,16 +175,18 @@ export default class WebRTCRecorder {
 		} else if (this.state === ERecordState.paused) {
 			this.resume();
 		}
+
 		return this;
 	}
 
 	private init = () => {
 		this.mediaSource = new MediaSource();
 		this.mediaStream = (this.canvas as CanvasBeta).captureStream(this.options.fps as number);
+
 		return this;
-	}
-	
-	private getMediaRecorder = (): MediaRecorder | false => {
+	};
+
+	private getMediaRecorder(): MediaRecorder | false {
 		const { format, codecs } = this.options;
 		const options1 = {
 			mimeType: "video/" + format + ";codecs=" + codecs

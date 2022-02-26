@@ -15,3 +15,4 @@ var fps;
 var codecs;
 var getUrl;
 var getBlob;
+var require;
